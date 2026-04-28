@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Toolkit Telemetry</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Telemetry Dashboard</h1>
+            <div class="pulse-indicator"></div>
+        </header>
+
+        <div class="stats-card">
+            <h2>Active Users Online</h2>
+            <div class="user-count" id="userCount">0</div>
+        </div>
+
+        <div class="user-list">
+            <h3>Connected Laptops</h3>
+            <ul id="userList">
+                <li class="loading">Fetching data...</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

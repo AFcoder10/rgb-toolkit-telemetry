@@ -75,6 +75,12 @@ class handler(BaseHTTPRequestHandler):
         elif self.path == '/script.js':
             filepath = os.path.join(base_dir, 'script.js')
             content_type = 'application/javascript'
+        elif self.path == '/privacy.html':
+            filepath = os.path.join(base_dir, 'privacy.html')
+            content_type = 'text/html'
+        elif self.path == '/rgb_wheel.ico' or self.path == '/favicon.ico':
+            filepath = os.path.join(base_dir, 'rgb_wheel.ico')
+            content_type = 'image/x-icon'
         else:
             self.send_response(404)
             self.end_headers()

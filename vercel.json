@@ -16,6 +16,10 @@
     {
       "src": "script.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "privacy.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [

@@ -5,6 +5,7 @@ import time
 # Global cache memory (ephemeral on Vercel, but matches user request)
 active_users = {}
 
+
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "ok")
@@ -25,11 +26,13 @@ class handler(BaseHTTPRequestHandler):
             
             if laptop_name:
                 if status == 'online':
-                    active_users[laptop_name] = time.time()
+                    active_users[laptop_name] = {
+                        "last_seen": time.time(),
+                        "effect": data.get("effect", "Unknown")
+                    }
                 elif status == 'offline':
                     if laptop_name in active_users:
                         del active_users[laptop_name]
-                        
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-type', 'application/json')
@@ -44,22 +47,33 @@ class handler(BaseHTTPRequestHandler):
         import os
         if self.path == '/api' or self.path.startswith('/api?'):
             global active_users
-            # Clean up stale users (e.g. haven't pinged in 6 minutes)
+                # Clean up stale users (e.g. haven't pinged in 6 minutes)
             current_time = time.time()
             timeout = 6 * 60 # 6 minutes (1 minute grace period over the 5 min ping)
             
-            stale_users = [user for user, last_seen in active_users.items() if current_time - last_seen > timeout]
+            stale_users = []
+            for user, info in active_users.items():
+                last_seen = info["last_seen"] if isinstance(info, dict) else info
+                if current_time - last_seen > timeout:
+                    stale_users.append(user)
             for user in stale_users:
                 del active_users[user]
+            
 
             self.send_response(200)
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             
+            users_list = []
+            for k, v in active_users.items():
+                if isinstance(v, dict):
+                    users_list.append({"id": k, "effect": v.get("effect", "Unknown")})
+                else:
+                    users_list.append({"id": k, "effect": "Unknown"})
             response = {
                 "totalUsers": len(active_users),
-                "users": list(active_users.keys())
+                "users": users_list
             }
             self.wfile.write(json.dumps(response).encode())
             return
